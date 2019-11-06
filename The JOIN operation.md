@@ -106,3 +106,35 @@ FROM goal a
 			OR b.team2 = 'GER')
 
 ```
+
+9. Show teamname and the total number of goals scored.
+
+```sql
+
+SELECT teamname, COUNT(teamid)
+  FROM eteam JOIN goal ON id=teamid
+  GROUP BY teamname
+
+```
+
+10. Show the stadium and the number of goals scored in each stadium.
+
+```sql
+
+SELECT stadium, COUNT(teamid)
+FROM game
+	JOIN goal ON id = matchid
+GROUP BY stadium
+
+```
+
+11. Show the stadium and the number of goals scored in each stadium.
+
+```sql
+
+SELECT stadium, COUNT(teamid)
+FROM game
+	JOIN goal ON id = matchid
+GROUP BY stadium
+
+```

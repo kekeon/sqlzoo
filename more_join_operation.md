@@ -51,12 +51,25 @@ WHERE name = 'Glenn Close'
 
 ```
 
-5. Cast list for Casablanca.
+6. What is the id of the film 'Casablanca'.
+
 
 ```sql
 
 SELECT id
 FROM movie
 WHERE title ='Casablanca'
+
+```
+
+7. Obtain the cast list for 'Casablanca'.
+
+    Use movieid=11768, (or whatever value you got from the previous question)
+```sql
+
+SELECT name
+FROM casting
+	JOIN actor ON actorid = id
+WHERE movieid = 11768
 
 ```

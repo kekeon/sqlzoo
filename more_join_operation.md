@@ -51,8 +51,7 @@ WHERE name = 'Glenn Close'
 
 ```
 
-6. What is the id of the film 'Casablanca'.
-
+5. What id movie 'Casablanca' have?.
 
 ```sql
 
@@ -64,12 +63,86 @@ WHERE title ='Casablanca'
 
 7. Obtain the cast list for 'Casablanca'.
 
+    The cast list is the names of the actors who were in the movie.
+
     Use movieid=11768, (or whatever value you got from the previous question)
+
 ```sql
 
 SELECT name
 FROM casting
 	JOIN actor ON actorid = id
 WHERE movieid = 11768
+
+```
+
+
+7. Obtain the cast list for the film 'Alien'.
+
+```sql
+
+SELECT a.name
+FROM actor a
+	JOIN (
+		SELECT c.actorid AS actorid
+		FROM movie m
+			JOIN casting c
+			ON m.id = c.movieid
+				AND m.title = 'Alien'
+	) b
+	ON a.id = b.actorid
+
+```
+
+8. List the films in which 'Harrison Ford' has appeared.
+
+```sql
+
+SELECT m.title
+FROM movie m
+	JOIN (
+		SELECT c.movieid AS id
+		FROM actor a
+			JOIN casting c
+			ON a.id = c.actorid
+				AND a.name = 'Harrison Ford'
+	) s
+	ON s.id = m.id
+
+```
+
+9. List the films where 'Harrison Ford' has appeared - but not in the starring role. [Note: the ord field of casting gives the position of the actor. If ord=1 then this actor is in the starring role].
+
+```sql
+
+SELECT m.title
+FROM movie m
+	JOIN (
+		SELECT c.movieid AS id, c.ord
+		FROM actor a
+			JOIN casting c
+			ON a.id = c.actorid
+				AND a.name = 'Harrison Ford'
+				AND c.ord != 1
+	) s
+	ON s.id = m.id
+
+```
+
+10. List the films together with the leading star for all 1962 films.
+
+```sql
+
+SELECT s.title, a.name
+FROM actor a
+	JOIN (
+		SELECT m.title AS title, c.actorid AS id
+		FROM movie m
+			JOIN casting c
+			ON m.id = c.movieid
+				AND m.yr = 1962
+				AND ord = 1
+	) s
+	ON s.id = a.id
 
 ```

@@ -146,3 +146,78 @@ FROM actor a
 	ON s.id = a.id
 
 ```
+
+11. Which were the busiest years for 'Rock Hudson', show the year and the number of movies he made each year for any year in which he made more than 2 movies.
+
+```sql
+
+SELECT yr, COUNT(title) AS num
+FROM (
+	SELECT movieid
+	FROM casting c
+	WHERE actorid IN (
+		SELECT id
+		FROM actor
+		WHERE name = 'Rock Hudson'
+	)
+) s
+	JOIN movie m ON s.movieid = m.id
+GROUP BY yr
+HAVING num > 2
+
+```
+
+12. Which were the busiest years for 'Rock Hudson', show the year and the number of movies he made each year for any year in which he made more than 2 movies.
+
+```sql
+
+SELECT yr, COUNT(title) AS num
+FROM (
+	SELECT movieid
+	FROM casting c
+	WHERE actorid IN (
+		SELECT id
+		FROM actor
+		WHERE name = 'Rock Hudson'
+	)
+) s
+	JOIN movie m ON s.movieid = m.id
+GROUP BY yr
+HAVING num > 2
+
+```
+
+13. List the film title and the leading actor for all of the films 'Julie Andrews' played in.
+
+```sql
+
+SELECT DISTINCT title, name
+FROM movie
+	JOIN casting ON casting.movieid = movie.id
+	JOIN actor
+	ON casting.actorid = actor.id
+		AND ord = 1
+WHERE movieid IN (
+	SELECT ex.id
+	FROM movie ex
+		JOIN casting ON casting.movieid = ex.id
+		JOIN actor ON actor.id = casting.actorid
+	WHERE name = 'Julie Andrews'
+)
+
+```
+
+14. Obtain a list, in alphabetical order, of actors who've had at least 30 starring roles.
+
+```sql
+
+SELECT a.name
+FROM casting c
+	JOIN actor a
+	ON c.actorid = a.id
+		AND c.ord = 1
+GROUP BY c.actorid, a.name
+HAVING COUNT(ord) >= 30
+ORDER BY a.name
+
+```

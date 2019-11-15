@@ -188,26 +188,79 @@ FROM
 ```sql
 
 SELECT 
-  DISTINCT a.company, 
+  s1.name, 
+  a.company, 
   a.num 
 FROM 
   route a 
-  JOIN route b ON a.company = b.company 
-  AND a.num = b.num 
-  AND a.stop = (
-    SELECT 
-      id 
-    FROM 
-      stops 
-    WHERE 
-      name = 'Craiglockhart'
+  JOIN route b ON (
+    a.company = b.company 
+    AND a.num = b.num
   ) 
-  AND b.stop = (
+  JOIN stops s1 ON (a.stop = s1.id) 
+  JOIN stops s2 ON (b.stop = s2.id) 
+WHERE 
+  s2.name = 'Craiglockhart'
+
+```
+
+10. Find the routes involving two buses that can go from Craiglockhart to Lochend. Show the bus no. and company for the first bus, the name of the stop for the transfer,
+  and the bus no. and company for the second bus.
+
+  Hint
+  Self-join twice to find buses that visit Craiglockhart and Lochend, then join those on matching stops.
+
+
+[本题难度大,参考](https://blog.csdn.net/Hielw/article/details/80170921)
+```sql
+
+SELECT 
+  DISTINCT bus1.num, 
+  bus1.company, 
+  name, 
+  bus2.num, 
+  bus2.company 
+FROM 
+  (
     SELECT 
-      id 
+      start1.num, 
+      start1.company, 
+      stop1.stop 
     FROM 
-      stops 
+      route AS start1 
+      JOIN route AS stop1 ON start1.num = stop1.num 
+      AND start1.company = stop1.company 
+      AND start1.stop != stop1.stop 
     WHERE 
-      name = 'Tollcross'
-  )
+      start1.stop = (
+        SELECT 
+          id 
+        FROM 
+          stops 
+        WHERE 
+          name = 'Craiglockhart'
+      )
+  ) AS bus1 
+  JOIN (
+    SELECT 
+      start2.num, 
+      start2.company, 
+      start2.stop 
+    FROM 
+      route AS start2 
+      JOIN route AS stop2 ON start2.num = stop2.num 
+      AND start2.company = stop2.company 
+      AND start2.stop != stop2.stop 
+    WHERE 
+      stop2.stop = (
+        SELECT 
+          id 
+        FROM 
+          stops 
+        WHERE 
+          name = 'Lochend'
+      )
+  ) AS bus2 ON bus1.stop = bus2.stop 
+  JOIN stops ON bus1.stop = stops.id
+  
 ```
